@@ -8,56 +8,65 @@ import RPi.GPIO as GPIO
 import time
 import sys
 import tqdm
+import logging
 
 def checkVariables():
   if len(sys.argv) < 3:
     print("variable(s) d'entree(s) manquante(s)")
+    logging.error("variable(s) d'entree(s) manquante(s)")
     sys.exit()
 
 def launch(electrovannes,action):
   for electrovanne in electrovannes:
     GPIO.setup(electrovanne, GPIO.OUT,initial=GPIO.HIGH)
     if action == "launch":
-      print("Lancement de l'electrovanne " + str(electrovanne) + "...")
+      logging.warning("Lancement de l'electrovanne " + str(electrovanne) + "...")
       GPIO.output(electrovanne, GPIO.LOW)
-      print("Electrovanne " + str(electrovanne) + " lancee")
+      logging.warning("Electrovanne " + str(electrovanne) + " lancee")
       
     else:
-      print("Arret de l'electrovanne " + str(electrovanne) + "...")
+      logging.warning("Arret de l'electrovanne " + str(electrovanne) + "...")
       GPIO.output(electrovanne, GPIO.HIGH)
-      print("Electrovanne " + str(electrovanne) + " coupee")
+      logging.warning("Electrovanne " + str(electrovanne) + " coupee")
 
 
 def main():
-  checkVariables()
-  duree=int(sys.argv[2])
-  if sys.argv[1]=="1":
-    type="herbe"
-    electrovannes=[2,3]
-  else:
-    type="potager"
-    electrovannes=[4]
+  try:
+      logging.basicConfig(filename='/var/log/arrosage/arrosage.log', format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p')
+      checkVariables()
+      duree=int(sys.argv[2])
+      if sys.argv[1]=="1":
+        type="herbe"
+        electrovannes=[2,3]
+      else:
+        type="potager"
+        electrovannes=[4]
 
-  print("""
-------------------------------------------------
-         Activation de l'arrosage
+      logging.warning("""
+    ------------------------------------------------
+             Activation de l'arrosage
 
-       - Lancement de l'arrosage partie : """ + type + """
-       - Duree : """ + str(duree) + """
-------------------------------------------------
-""")
+           - Lancement de l'arrosage partie : """ + type + """
+           - Duree : """ + str(duree) + """
+    ------------------------------------------------
+    """)
 
-  print("Activation en mode 'BCM'")
-  GPIO.setmode(GPIO.BCM)
+      logging.warning("Activation en mode 'BCM'")
+      GPIO.setmode(GPIO.BCM)
 
-  launch(electrovannes,"launch")
+      launch(electrovannes,"launch")
 
-  for i in tqdm.tqdm(range(duree)):
-    time.sleep(1)
+      for i in tqdm.tqdm(range(duree)):
+        time.sleep(1)
 
-  launch(electrovannes,"stop")
+      launch(electrovannes,"stop")
 
-  print("Remise a zero des entrees/sorties")
-  GPIO.cleanup()
+      logging.warning("Remise a zero des entrees/sorties")
+      GPIO.cleanup()
+  except Exception as e:
+    print("error : " + e)
+    GPIO.cleanup()
+    logging.warning("Error : " + e)
 
-main()
+if __name__ == '__main__':
+    main()
