@@ -16,16 +16,16 @@ def checkVariables():
 
 def launch(electrovannes,action):
   for electrovanne in electrovannes:
-    GPIO.setup(electrovanne, GPIO.OUT,initial=GPIO.LOW)
+    GPIO.setup(electrovanne, GPIO.OUT,initial=GPIO.HIGH)
     if action == "launch":
       print("Lancement de l'electrovanne " + str(electrovanne) + "...")
-      GPIO.output(electrovanne, GPIO.HIGH)
-      print("Electrovanne " + str(electrovanne) + " lancée")
+      GPIO.output(electrovanne, GPIO.LOW)
+      print("Electrovanne " + str(electrovanne) + " lancee")
       
     else:
       print("Arret de l'electrovanne " + str(electrovanne) + "...")
-      GPIO.output(electrovanne, GPIO.LOW)
-      print("Electrovanne " + str(electrovanne) + " coupée")
+      GPIO.output(electrovanne, GPIO.HIGH)
+      print("Electrovanne " + str(electrovanne) + " coupee")
 
 
 def main():
@@ -33,22 +33,22 @@ def main():
   duree=int(sys.argv[2])
   if sys.argv[1]=="1":
     type="herbe"
-    electrovannes=[36, 37]
+    electrovannes=[2,3]
   else:
     type="potager"
-    electrovannes=[38]
+    electrovannes=[4]
 
   print("""
 ------------------------------------------------
          Activation de l'arrosage
 
        - Lancement de l'arrosage partie : """ + type + """
-       - Durée : """ + str(duree) + """
+       - Duree : """ + str(duree) + """
 ------------------------------------------------
 """)
 
-  print("Activation en mode 'BOARD'")
-  GPIO.setmode(GPIO.BOARD)
+  print("Activation en mode 'BCM'")
+  GPIO.setmode(GPIO.BCM)
 
   launch(electrovannes,"launch")
 
