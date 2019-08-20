@@ -32,7 +32,7 @@ def launch(electrovannes,action):
 
 def main():
   try:
-      logging.basicConfig(filename='/var/log/arrosage/arrosage.log', format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p')
+      logging.basicConfig(filename='../arrosage/arrosage.log', format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p')
       checkVariables()
       duree=int(sys.argv[2])
       if sys.argv[1]=="1":
